@@ -13,6 +13,7 @@ dfm.simil.m <- read.csv(
 
 plot_data <- read.csv("https://raw.githubusercontent.com/danbernstein/sotuviz_shiny/master/data/plot_data.csv")
 
+tidy.count <- read.csv("https://raw.githubusercontent.com/danbernstein/sotuviz_shiny/master/data/tidy_countbypresidentyear.csv")
 
 # Define UI for application that draws a histogram
 ui <- shinyUI(navbarPage("Trend Analysis of State of the Union Addresses",
