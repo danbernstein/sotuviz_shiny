@@ -1,0 +1,10 @@
+name: sotuviz_shiny
+title:
+username:
+account: bikeshareviz
+server: shinyapps.io
+hostUrl: https://api.shinyapps.io/v1
+appId: 317427
+bundleId: 1308302
+url: https://bikeshareviz.shinyapps.io/sotuviz_shiny/
+when: 1523198512.03238

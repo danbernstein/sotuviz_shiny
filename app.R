@@ -2,12 +2,9 @@ library(shiny)
 library(plotly)
 library(shinythemes)
 library(dplyr)
-library(tidytext)
 library(stringr)
 library(tidyr)
-library(topicmodels)
 library(htmlwidgets)
-library(plotly)
 library(readr)
 
 dfm.simil.m <- read.csv(
@@ -16,62 +13,46 @@ dfm.simil.m <- read.csv(
 
 plot_data <- read.csv("https://raw.githubusercontent.com/danbernstein/sotuviz_shiny/master/data/plot_data.csv")
 
-m <- list(
-  l = 50,
-  r = 50,
-  b = 100,
-  t = 100,
-  pad = 4
-)
 
 # Define UI for application that draws a histogram
-ui <- fluidPage(
+ui <- shinyUI(navbarPage("Trend Analysis of State of the Union Addresses",
     # Set theme
-    theme = shinytheme("spacelab"),
+    #theme = shinytheme("spacelab"),
+#   h2("Trend Analysis of State of the Union Addresses"),
+#   h4("Investigating linguistic changes from Washington to Obama using text mining tools"),
+#   
+#   # Vertical space
+#   tags$hr(),
     
-    # Some help text
-    h2("Trend Analysis of State of the Union Addresses"),
-    h4("Investigating linguistic changes from Washington to Obama using text mining tools"),
-    
-    # Vertical space
-    tags$hr(),
-  
-    # Plotly Chart Area
-    fluidRow(
-      column(6, plotlyOutput(outputId = "timeseries", height = "600px")),
-      column(1),
-      column(6,
-     # div(style="display: inline-block;vertical-align:top; width: 25px;",HTML("<br>"))
-      #div(style = "display:inline-block;vertical-align:top;width: 300px;",
-      #helpText("There are a a number of measures of document text similarity, see the bottom box for brief explanations of each one."))
-    fluidRow(
-      align = "center", plotlyOutput(outputId = "plot", height = "550px")),
-    fluidRow(
-      div(style="display: inline-block;vertical-align:top; width: 25%;",HTML("<br>")),
-      div(style="display: inline-block;vertical-align:top;width: 50%",
-      radioButtons("simil_type", h4("Choose a Similarity Measure"), 
-                   c("Cosine" = "Cosine Function",
-                     "Correlation" = "Correlation",
-                     "Jaccard" = "Jaccard"), 
-                   "Cosine Function", inline = TRUE))),
-     div(style="display: inline-block;vertical-align:top; width: 25%;",HTML("<br>"))
-    
-    
-      )),
-    tags$head(tags$style("#table{color: black;
-                                 font-size: 16px;
-                         font-style: bold;
-                         }"
-                         )
-              ),
-    
-    tags$hr(),
-    tags$blockquote(
-      div(
-          p(HTML("There are a range of measurements for text similarity among the documents in a corpus. The heatmap on the right demonstrates three of the most common
-                    measures (Cosine Function, Correlation, and Jaccard). Check out my ", paste0(a(href = 'https://danbernstein.netlify.com/post/text-mining-sotu/', 'blog post '),
-                        'to better understand the differences and technical considerations when working with each.'))))
-    ))
+        tabPanel("Topic Modelling",
+                 sidebarLayout(
+                   sidebarPanel("Topic Modelling is an unsupervised learning technique that models each document in a corpus as a mixture of topics, and each topic as a mixture of words. 
+                                At the document level, the output for each document is represented as a percent of each topic, ranging from 0 to 1."),
+                mainPanel(plotlyOutput(outputId = "timeseries", width = "100%")))
+        ),
+        tabPanel("Text Similarity",
+                 sidebarLayout(
+                  sidebarPanel(
+                  radioButtons("simil_type", h4("Similarity Measures"), 
+                             c("Cosine" = "Cosine Function",
+                               "Correlation" = "Correlation",
+                               "Jaccard" = "Jaccard"), 
+                             "Cosine Function", inline = TRUE),
+                  verbatimTextOutput(outputId = "heatmap_topvalues")
+                  ),
+              mainPanel(plotlyOutput(outputId = "plot", height = "550px"))),
+       tags$hr(),
+       tags$blockquote(
+         div(
+           p(HTML("There are a range of measurements for text similarity among the documents in a corpus. The heatmap on the right demonstrates three of the most common
+                  measures (Cosine Function, Correlation, and Jaccard). Check out my ", 
+                  paste0(a(href = 'https://danbernstein.netlify.com/post/text-mining-sotu/', 'blog post '),
+                         'to better understand the differences and technical considerations when working with each.'))))
+       )
+      )
+))
+
+
 
 
 # Define server logic required to draw a histogram
@@ -143,6 +124,15 @@ server <- function(input, output) {
        layout(title = paste("Text Similarity based on", input$simil_type),
               xaxis = list(title = "", nticks = 10),
               yaxis = list(title = "", autorange = "reversed"), autosize = T) 
+   })
+   output$heatmap_topvalues <- renderText({
+     
+     eventdata <- event_data("plotly_click", source = "source")
+     validate(need(!is.null(eventdata), "Hover over the heatmap to see the president comparisons"))
+     
+     datapoint <- as.numeric(eventdata$x)[1]
+     
+     datapoint
    })
      
 }
