@@ -5,6 +5,6 @@ account: bikeshareviz
 server: shinyapps.io
 hostUrl: https://api.shinyapps.io/v1
 appId: 317427
-bundleId: 1309147
+bundleId: 1309174
 url: https://bikeshareviz.shinyapps.io/sotuviz_shiny/
-when: 1523247219.3795
+when: 1523248711.49304

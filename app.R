@@ -27,24 +27,24 @@ ay <- list(
 )
 
 # Define UI for application that draws a histogram
-ui <- shinyUI(navbarPage("Trend Analysis of State of the Union Addresses",
+ui <- shinyUI(navbarPage("Trend Analysis of State of the Union",
                          
         tabPanel("Topic Modelling",
                  sidebarLayout(
                    sidebarPanel(
                                selectizeInput(inputId = "plot_word", 
-                                           label = "Choose from the most unique terms in each topic", 
+                                           label = "Choose from the most unique terms in each topic, or enter your own term", 
                                            choices = 
-                                             stringr::str_to_title(as.list(topic.words)),
+                                             as.list(topic.words$x),
                                            options = list(
                                              placeholder = 'Please select an option below',
                                              onInitialize = I('function() { this.setValue(""); }')
                                            )),
-                               textInput("text_input1", "or enter another word",
-                                           placeholder = 'enter another word to overlay'
+                               textInput("text_input1", "",
+                                           placeholder = 'Enter another word'
                                          )
                                ),
-                mainPanel(plotlyOutput(outputId = "timeseries", width = "95%"))),
+                   mainPanel(plotlyOutput(outputId = "timeseries", width = "90%"))),
                 tags$hr(),
                 tags$blockquote(
                   div(
@@ -53,7 +53,6 @@ ui <- shinyUI(navbarPage("Trend Analysis of State of the Union Addresses",
                            topics using the Latent Dirichlet Allocation (LDA) model, where the document is made up of a proportion of each topic, and each topic is a collection of terms, which can 
                            contribute to one or more topics. To better understand how terms can contribute to more than one topic, you can use the sidepanel to overlay the term trend usage, generated as a smoothed spline."))))
                 ),
-        
         tabPanel("Text Similarity",
                  sidebarLayout(
                   sidebarPanel(
@@ -68,7 +67,7 @@ ui <- shinyUI(navbarPage("Trend Analysis of State of the Union Addresses",
        tags$blockquote(
          div(
            p(HTML("There are a range of measurements for text similarity among the documents in a corpus. The heatmap on the right demonstrates three of the most common
-                  measures (Cosine Function, Correlation, and Jaccard). Check out my ", 
+                  measures (Cosine, Correlation, and Jaccard). Check out my ", 
                   paste0(a(href = 'https://danbernstein.netlify.com/post/text-mining-sotu/', 'blog post '),
                          'to better understand the differences and technical considerations when working with each.'))))
        )
@@ -76,9 +75,7 @@ ui <- shinyUI(navbarPage("Trend Analysis of State of the Union Addresses",
 ))
 
 
-
-
-# Define server logic required to draw a histogram
+# server logic
 
 server <- function(input, output) {
   
