@@ -160,11 +160,11 @@ output$plot <- renderPlotly({
          x = ~item1_year, y = ~item2_year
        ) %>% 
        add_heatmap(
-         z = ~cosine, zmin = 0, zmax = 1,
+         z = ~cosine, zmin = 0, zmax = 1, colors = colorRamp(c("blue", "green", "red")),
          text = ~paste0(
-           item1_president, " (", Var1, ") ", "<br>",
-           item2_president, " (", Var2, ") ","<br>text similarity: ", round(cosine, 3)),
-         hoverinfo = "text", opacity = 0.85, showscale = F
+           item1_president, " (", item1_year, ") ", "<br>",
+           item2_president, " (", item2_year, ") ","<br>text similarity: ", round(cosine, 3)),
+         hoverinfo = "text", opacity = 0.85, showscale = T
        ) 
        } else if (input$simil_type == 'Correlation') {
          dfm.simil.m %>% 
@@ -172,27 +172,28 @@ output$plot <- renderPlotly({
              x = ~item1_year, y = ~item2_year
            ) %>% 
            add_heatmap(
-             z = ~correlation, zmin = 0, zmax = 1,
+             z = ~correlation, zmin = 0, zmax = 1, colors = colorRamp(c("blue", "green", "red")),
              text = ~paste0(
-               item1_president, " (", Var1, ") ", "<br>",
-               item2_president, " (", Var2, ") ","<br>text similarity: ", round(correlation, 3)),
-             hoverinfo = "text", opacity = 0.85, showscale = F)
+               item1_president, " (", item1_year, ") ", "<br>",
+               item2_president, " (", item2_year, ") ","<br>text similarity: ", round(correlation, 3)),
+             hoverinfo = "text", opacity = 0.85, showscale = T)
        } else if (input$simil_type == 'Jaccard') {
          dfm.simil.m %>% 
            plot_ly(
              x = ~item1_year, y = ~item2_year
            ) %>% 
            add_heatmap(
-             z = ~jaccard, zmin = 0, zmax = 1,
+             z = ~jaccard, zmin = 0, zmax = 1, colors = colorRamp(c("blue", "green", "red")),
              text = ~paste0(
-               item1_president, " (", Var1, ") ", "<br>",
-               item2_president, " (", Var2, ") ","<br>text similarity: ", round(jaccard, 3)),
-             hoverinfo = "text", opacity = 0.85, showscale = F)
+               item1_president, " (", item1_year, ") ", "<br>",
+               item2_president, " (", item2_year, ") ","<br>text similarity: ", round(jaccard, 3)),
+             hoverinfo = "text", opacity = 0.85, showscale = T)
        }
      simil.plot %>% 
        layout(title = paste("Text Similarity based on", input$simil_type),
-              xaxis = list(title = "", nticks = 10),
-              yaxis = list(title = "", autorange = "reversed"), autosize = T) 
+              xaxis = list(title = "", nticks = 10, showgrid =F),
+              yaxis = list(title = "", autorange = "reversed", showgrid = F), 
+              autosize = T) 
    })
 }
 
