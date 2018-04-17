@@ -162,8 +162,8 @@ output$plot <- renderPlotly({
        add_heatmap(
          z = ~cosine, zmin = 0, zmax = 1,
          text = ~paste0(
-           president.x, " (", Var1, ") ", "<br>",
-           president.y, " (", Var2, ") ","<br>text similarity: ", round(cosine, 3)),
+           item1_president, " (", Var1, ") ", "<br>",
+           item2_president, " (", Var2, ") ","<br>text similarity: ", round(cosine, 3)),
          hoverinfo = "text", opacity = 0.85, showscale = F
        ) 
        } else if (input$simil_type == 'Correlation') {
@@ -174,8 +174,8 @@ output$plot <- renderPlotly({
            add_heatmap(
              z = ~correlation, zmin = 0, zmax = 1,
              text = ~paste0(
-               president.x, " (", Var1, ") ", "<br>",
-               president.y, " (", Var2, ") ","<br>text similarity: ", round(correlation, 3)),
+               item1_president, " (", Var1, ") ", "<br>",
+               item2_president, " (", Var2, ") ","<br>text similarity: ", round(correlation, 3)),
              hoverinfo = "text", opacity = 0.85, showscale = F)
        } else if (input$simil_type == 'Jaccard') {
          dfm.simil.m %>% 
@@ -185,8 +185,8 @@ output$plot <- renderPlotly({
            add_heatmap(
              z = ~jaccard, zmin = 0, zmax = 1,
              text = ~paste0(
-               president.x, " (", Var1, ") ", "<br>",
-               president.y, " (", Var2, ") ","<br>text similarity: ", round(jaccard, 3)),
+               item1_president, " (", Var1, ") ", "<br>",
+               item2_president, " (", Var2, ") ","<br>text similarity: ", round(jaccard, 3)),
              hoverinfo = "text", opacity = 0.85, showscale = F)
        }
      simil.plot %>% 
