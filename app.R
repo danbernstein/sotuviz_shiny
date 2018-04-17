@@ -8,7 +8,7 @@ library(htmlwidgets)
 library(readr)
 
 dfm.simil.m <- read.csv(
-  "https://raw.githubusercontent.com/danbernstein/sotuviz_shiny/master/data/similcombined_tidy.csv", 
+  "https://raw.githubusercontent.com/danbernstein/sotuviz_shiny/master/data/similcombined_tidy041718.csv", 
   stringsAsFactors = F, header = T, check.names = F)
 
 plot_data <- read.csv("https://raw.githubusercontent.com/danbernstein/sotuviz_shiny/master/data/plot_data.csv")
@@ -144,14 +144,10 @@ server <- function(input, output) {
   
     
  })
-   
-   heatmap.df <- reactive({
-     switch(input$simil_type,
-            "Cosine Function" = dfm.simil.m,
-            "Correlation" = dfm.simil.m)
-   })
-   
-   output$plot <- renderPlotly({
+  
+## analyze the words contributing to high correlation in some pockets
+  ## use tf-idf rather than tf in cosine, and others?
+output$plot <- renderPlotly({
      
      eventdata <- event_data("plotly_click", source = "source")
 
@@ -161,36 +157,36 @@ server <- function(input, output) {
        if(input$simil_type == 'Cosine Function'){
        dfm.simil.m %>% 
        plot_ly(
-         x = ~Var1, y = ~Var2
+         x = ~item1_year, y = ~item2_year
        ) %>% 
        add_heatmap(
-         z = ~similarity_cosine, zmin = 0, zmax = 1,
+         z = ~cosine, zmin = 0, zmax = 1,
          text = ~paste0(
            president.x, " (", Var1, ") ", "<br>",
-           president.y, " (", Var2, ") ","<br>text similarity: ", round(similarity_cosine, 3)),
+           president.y, " (", Var2, ") ","<br>text similarity: ", round(cosine, 3)),
          hoverinfo = "text", opacity = 0.85, showscale = F
        ) 
        } else if (input$simil_type == 'Correlation') {
          dfm.simil.m %>% 
            plot_ly(
-             x = ~Var1, y = ~Var2
+             x = ~item1_year, y = ~item2_year
            ) %>% 
            add_heatmap(
-             z = ~similarity_correlation, zmin = 0, zmax = 1,
+             z = ~correlation, zmin = 0, zmax = 1,
              text = ~paste0(
                president.x, " (", Var1, ") ", "<br>",
-               president.y, " (", Var2, ") ","<br>text similarity: ", round(similarity_correlation, 3)),
+               president.y, " (", Var2, ") ","<br>text similarity: ", round(correlation, 3)),
              hoverinfo = "text", opacity = 0.85, showscale = F)
        } else if (input$simil_type == 'Jaccard') {
          dfm.simil.m %>% 
            plot_ly(
-             x = ~Var1, y = ~Var2
+             x = ~item1_year, y = ~item2_year
            ) %>% 
            add_heatmap(
-             z = ~similarity_jaccard, zmin = 0, zmax = 1,
+             z = ~jaccard, zmin = 0, zmax = 1,
              text = ~paste0(
                president.x, " (", Var1, ") ", "<br>",
-               president.y, " (", Var2, ") ","<br>text similarity: ", round(similarity_correlation, 3)),
+               president.y, " (", Var2, ") ","<br>text similarity: ", round(jaccard, 3)),
              hoverinfo = "text", opacity = 0.85, showscale = F)
        }
      simil.plot %>% 
@@ -198,16 +194,6 @@ server <- function(input, output) {
               xaxis = list(title = "", nticks = 10),
               yaxis = list(title = "", autorange = "reversed"), autosize = T) 
    })
- #  output$heatmap_topvalues <- renderText({
- #    
- #    eventdata <- event_data("plotly_click", source = "source")
- #    validate(need(!is.null(eventdata), "Hover over the heatmap to see the president comparisons"))
- #    
- #    datapoint <- as.numeric(eventdata$x)[1]
- #    
- #    datapoint
- #  })
-     
 }
 
 # Run the application 
